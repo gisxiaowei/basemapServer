@@ -9,11 +9,12 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"encoding/json"
 )
 
 var arcgisCache10_1s map[string]arcgisCache.ArcgisCache10_1 = make(map[string]arcgisCache.ArcgisCache10_1)
 
-// 请求示例：http://localhost:9000/2/36/28
+// 请求示例：http://localhost:9000/rest/services/USA/MapServer/tile/2/36/28
 func main() {
 	var services config.Services
 	if _, err := toml.DecodeFile("config.toml", &services); err != nil {
@@ -31,13 +32,57 @@ func main() {
 
 	// 路由
 	r := mux.NewRouter()
-	r.HandleFunc("/services/{name}/{level:[0-9]+}/{row:[0-9]+}/{col:[0-9]+}", ArcgisCache10_1Handler)
+	r.HandleFunc("/rest/services/{name}/MapServer", ArcgisCache10_1Handler)
+	r.HandleFunc("/rest/services/{name}/MapServer/tile/{level:[0-9]+}/{row:[0-9]+}/{col:[0-9]+}", ArcgisCache10_1TileHandler)
 
 	// 运行
 	log.Fatal(http.ListenAndServe(":9000", r))
 }
 
+// MapServer处理函数
 func ArcgisCache10_1Handler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	// 服务名
+	name, _ := vars["name"]
+	if _, ok := arcgisCache10_1s[name]; ok {
+		//arcgisCache10_1 := arcgisCache10_1s[name]
+		mapServer:=arcgisCache.MapServer{
+			CurrentVersion           :  10.11,
+			ServiceDescription       :"",
+			MapName                   :"Layers",
+			Description               :"",
+			CopyrightText             :"",
+			SupportsDynamicLayers     :false,
+			Layers                    :nil,
+			Tables                    :nil,
+			/*spatialReference          SpatialReference `json:"spatialReference"`
+			SingleFusedMapCache       bool             `json:"singleFusedMapCache"`
+			TileInfo                  TileInfo         `json:"tileInfo"`
+			InitialExtent             Extent           `json:"initialExtent"`
+			FullExtent                Extent           `json:"fullExtent"`
+			MinScale                  int64            `json:"minScale"`
+			MaxScale                  int64            `json:"maxScale"`
+			Units                     string           `json:"units"`
+			SupportedImageFormatTypes string           `json:"supportedImageFormatTypes"`
+			DocumentInfo              DocumentInfo     `json:"documentInfo"`
+			Capabilities              string           `json:"capabilities"`
+			SupportedQueryFormats     string           `json:"supportedQueryFormats"`
+			MaxRecordCount            int32            `json:"maxRecordCount"`
+			MaxImageHeight            int32            `json:"maxImageHeight"`
+			MaxImageWidth             int32            `json:"maxImageWidth"`*/
+		}
+
+		w.Header().Set("Content-Type", "text/plain")
+		jsonStr,_:=json.Marshal(mapServer)
+		w.Write([]byte(jsonStr))
+	} else {
+		http.NotFound(w, r)
+	}
+}
+
+// 瓦片处理函数
+func ArcgisCache10_1TileHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	// 服务名
