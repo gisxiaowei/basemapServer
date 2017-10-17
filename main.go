@@ -1,20 +1,21 @@
 package main
 
 import (
-	"github.com/BurntSushi/toml"
-	"github.com/gisxiaowei/basemapServer/config"
-	"github.com/gisxiaowei/basemapServer/dataSource/arcgisCache"
-	"github.com/gorilla/mux"
+	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
-	"encoding/json"
+
+	"github.com/BurntSushi/toml"
+	"github.com/gisxiaowei/basemapServer/config"
+	"github.com/gisxiaowei/basemapServer/dataSource/arcgisCache"
+	"github.com/gorilla/mux"
 )
 
 var arcgisCache10_1s map[string]arcgisCache.ArcgisCache10_1 = make(map[string]arcgisCache.ArcgisCache10_1)
 
-// 请求示例：http://localhost:9000/rest/services/USA/MapServer/tile/2/36/28
+// 请求示例：http://localhost:9000/rest/services/USA/MapServer/tile/2/34/24
 func main() {
 	var services config.Services
 	if _, err := toml.DecodeFile("config.toml", &services); err != nil {
@@ -47,15 +48,15 @@ func ArcgisCache10_1Handler(w http.ResponseWriter, r *http.Request) {
 	name, _ := vars["name"]
 	if _, ok := arcgisCache10_1s[name]; ok {
 		//arcgisCache10_1 := arcgisCache10_1s[name]
-		mapServer:=arcgisCache.MapServer{
-			CurrentVersion           :  10.11,
-			ServiceDescription       :"",
-			MapName                   :"Layers",
-			Description               :"",
-			CopyrightText             :"",
-			SupportsDynamicLayers     :false,
-			Layers                    :nil,
-			Tables                    :nil,
+		mapServer := arcgisCache.MapServer{
+			CurrentVersion:        10.11,
+			ServiceDescription:    "",
+			MapName:               "Layers",
+			Description:           "",
+			CopyrightText:         "",
+			SupportsDynamicLayers: false,
+			Layers:                nil,
+			Tables:                nil,
 			/*spatialReference          SpatialReference `json:"spatialReference"`
 			SingleFusedMapCache       bool             `json:"singleFusedMapCache"`
 			TileInfo                  TileInfo         `json:"tileInfo"`
@@ -74,7 +75,7 @@ func ArcgisCache10_1Handler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.Header().Set("Content-Type", "text/plain")
-		jsonStr,_:=json.Marshal(mapServer)
+		jsonStr, _ := json.Marshal(mapServer)
 		w.Write([]byte(jsonStr))
 	} else {
 		http.NotFound(w, r)

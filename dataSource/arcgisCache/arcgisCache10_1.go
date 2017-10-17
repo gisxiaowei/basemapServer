@@ -48,7 +48,7 @@ func (a *ArcgisCache10_1) GetTileBytes(level int64, row int64, col int64) ([]byt
 
 // 通过xml获取瓦片配置信息
 func (a *ArcgisCache10_1) getCacheInfo() (CacheInfo, error) {
-	content, err := ioutil.ReadFile(fmt.Sprintf(`%s\conf.xml`, a.Path))
+	content, err := ioutil.ReadFile(fmt.Sprintf(`%s/conf.xml`, a.Path))
 	if err != nil {
 		return CacheInfo{}, err
 	}
@@ -68,7 +68,7 @@ func (a *ArcgisCache10_1) getTileInfo(level int64, row int64, col int64) (string
 	colIndex := (col / packetSize) * packetSize
 
 	// L：2位十进制；R：4位十六进制；C：4位十六进制
-	filepath := fmt.Sprintf(`%s\_alllayers\L%02d\R%04XC%04X`, basePath, level, rowIndex, colIndex)
+	filepath := fmt.Sprintf(`%s/_alllayers/L%02d/R%04XC%04X`, basePath, level, rowIndex, colIndex)
 
 	recordNumber := ((packetSize * (col - colIndex)) + (row - rowIndex))
 	if recordNumber < 0 {
