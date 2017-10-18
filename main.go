@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -9,11 +10,12 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/gisxiaowei/basemapServer/config"
-	"github.com/gisxiaowei/basemapServer/dataSource/arcgisCache"
+	"github.com/gisxiaowei/basemapServer/dataSource/arcgisCache/arcgisCache10_1"
+	"github.com/gisxiaowei/basemapServer/service"
 	"github.com/gorilla/mux"
 )
 
-var arcgisCache10_1s map[string]arcgisCache.ArcgisCache10_1 = make(map[string]arcgisCache.ArcgisCache10_1)
+var arcgisCache10_1s = make(map[string]arcgisCache10_1.ArcgisCache10_1)
 
 // 请求示例：http://localhost:9000/rest/services/USA/MapServer/tile/2/34/24
 func main() {
@@ -24,7 +26,7 @@ func main() {
 
 	for _, s := range services.Service {
 		// 创建ArcGIS缓存对象
-		arcgisCache10_1, err := arcgisCache.NewArcgisCache10_1(s.Path)
+		arcgisCache10_1, err := arcgisCache10_1.NewArcgisCache10_1(s.Path)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -47,35 +49,112 @@ func ArcgisCache10_1Handler(w http.ResponseWriter, r *http.Request) {
 	// 服务名
 	name, _ := vars["name"]
 	if _, ok := arcgisCache10_1s[name]; ok {
-		//arcgisCache10_1 := arcgisCache10_1s[name]
-		mapServer := arcgisCache.MapServer{
+		arcgisCache10_1 := arcgisCache10_1s[name]
+		cacheInfo := arcgisCache10_1.CacheInfo
+		envelope := arcgisCache10_1.Envelope
+		lods := []service.Lod{}
+		for _, lodInfo := range cacheInfo.TileCacheInfo.LODInfos {
+			lods = append(lods, service.Lod{
+				Level:      lodInfo.LevelID,
+				Resolution: lodInfo.Resolution,
+				Scale:      lodInfo.Scale,
+			})
+		}
+		mapServer := service.MapServer{
 			CurrentVersion:        10.11,
 			ServiceDescription:    "",
 			MapName:               "Layers",
 			Description:           "",
 			CopyrightText:         "",
 			SupportsDynamicLayers: false,
-			Layers:                nil,
-			Tables:                nil,
-			/*spatialReference          SpatialReference `json:"spatialReference"`
-			SingleFusedMapCache       bool             `json:"singleFusedMapCache"`
-			TileInfo                  TileInfo         `json:"tileInfo"`
-			InitialExtent             Extent           `json:"initialExtent"`
-			FullExtent                Extent           `json:"fullExtent"`
-			MinScale                  int64            `json:"minScale"`
-			MaxScale                  int64            `json:"maxScale"`
-			Units                     string           `json:"units"`
-			SupportedImageFormatTypes string           `json:"supportedImageFormatTypes"`
-			DocumentInfo              DocumentInfo     `json:"documentInfo"`
-			Capabilities              string           `json:"capabilities"`
-			SupportedQueryFormats     string           `json:"supportedQueryFormats"`
-			MaxRecordCount            int32            `json:"maxRecordCount"`
-			MaxImageHeight            int32            `json:"maxImageHeight"`
-			MaxImageWidth             int32            `json:"maxImageWidth"`*/
+			Layers:                []interface{}{},
+			Tables:                []interface{}{},
+			SpatialReference: service.SpatialReference{
+				Wkid:       cacheInfo.TileCacheInfo.SpatialReference.WKID,
+				LatestWkid: cacheInfo.TileCacheInfo.SpatialReference.LatestWKID,
+			},
+			SingleFusedMapCache: true,
+			TileInfo: service.TileInfo{
+				Rows:               cacheInfo.TileCacheInfo.TileRows,
+				Cols:               cacheInfo.TileCacheInfo.TileCols,
+				Dpi:                cacheInfo.TileCacheInfo.DPI,
+				Format:             cacheInfo.TileImageInfo.CacheTileFormat,
+				CompressionQuality: cacheInfo.TileImageInfo.CompressionQuality,
+				Origin: service.Point{
+					X: cacheInfo.TileCacheInfo.TileOrigin.X,
+					Y: cacheInfo.TileCacheInfo.TileOrigin.Y,
+				},
+				SpatialReference: service.SpatialReference{
+					Wkid:       cacheInfo.TileCacheInfo.SpatialReference.WKID,
+					LatestWkid: cacheInfo.TileCacheInfo.SpatialReference.LatestWKID,
+				},
+				Lods: lods,
+			},
+			InitialExtent: service.Extent{
+				XMin: envelope.XMin,
+				YMin: envelope.YMin,
+				XMax: envelope.XMax,
+				YMax: envelope.YMax,
+				SpatialReference: service.SpatialReference{
+					Wkid:       cacheInfo.TileCacheInfo.SpatialReference.WKID,
+					LatestWkid: cacheInfo.TileCacheInfo.SpatialReference.LatestWKID,
+				},
+			},
+			FullExtent: service.Extent{
+				XMin: envelope.XMin,
+				YMin: envelope.YMin,
+				XMax: envelope.XMax,
+				YMax: envelope.YMax,
+				SpatialReference: service.SpatialReference{
+					Wkid:       cacheInfo.TileCacheInfo.SpatialReference.WKID,
+					LatestWkid: cacheInfo.TileCacheInfo.SpatialReference.LatestWKID,
+				},
+			},
+			MinScale: lods[0].Scale,
+			MaxScale: lods[len(lods)-1].Scale,
+			Units:    "esriDecimalDegrees",
+			SupportedImageFormatTypes: "PNG32,PNG24,PNG,JPG,DIB,TIFF,EMF,PS,PDF,GIF,SVG,SVGZ,BMP",
+			DocumentInfo: service.DocumentInfo{
+				Title:                "",
+				Author:               "",
+				Comments:             "",
+				Subject:              "",
+				Category:             "",
+				AntialiasingMode:     "None",
+				TextAntialiasingMode: "Force",
+				Keywords:             "",
+			},
+			Capabilities:          "Map,Query,Data",
+			SupportedQueryFormats: "JSON, AMF",
+			MaxRecordCount:        1000,
+			MaxImageHeight:        2048,
+			MaxImageWidth:         2048,
 		}
 
 		w.Header().Set("Content-Type", "text/plain")
-		jsonStr, _ := json.Marshal(mapServer)
+		query := r.URL.Query()
+
+		// format
+		f := query.Get("f")
+		var jsonBytes []byte
+		var err error
+		if strings.ToLower(f) == "pjson" {
+			jsonBytes, err = json.MarshalIndent(mapServer, "", "  ")
+		} else {
+			jsonBytes, err = json.Marshal(mapServer)
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+		jsonStr := string(jsonBytes)
+
+		// callback
+		callback := query.Get("callback")
+		callback = strings.TrimSpace(callback)
+		if callback != "" {
+			jsonStr = fmt.Sprintf(`%s(%s);`, callback, jsonStr)
+		}
+
 		w.Write([]byte(jsonStr))
 	} else {
 		http.NotFound(w, r)
