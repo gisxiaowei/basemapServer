@@ -35,8 +35,10 @@ func main() {
 
 	// 路由
 	r := mux.NewRouter()
-	r.HandleFunc("/rest/services/{name}/MapServer", ArcgisCache10_1Handler)
+	// {_:[/]?}表示/可以重复任意次
+	r.HandleFunc("/rest/services/{name}/MapServer{_:[/]?}", ArcgisCache10_1Handler)
 	r.HandleFunc("/rest/services/{name}/MapServer/tile/{level:[0-9]+}/{row:[0-9]+}/{col:[0-9]+}", ArcgisCache10_1TileHandler)
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("public/"))))
 
 	// 运行
 	log.Fatal(http.ListenAndServe(":9000", r))
@@ -131,7 +133,8 @@ func ArcgisCache10_1Handler(w http.ResponseWriter, r *http.Request) {
 			MaxImageWidth:         2048,
 		}
 
-		w.Header().Set("Content-Type", "text/plain")
+		//w.Header().Set("Content-Type", "text/plain")
+		w.Header().Set("Content-Type", "application/json")
 		query := r.URL.Query()
 
 		// format

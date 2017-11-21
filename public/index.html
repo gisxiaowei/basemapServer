@@ -21,7 +21,7 @@
         function(Map, ArcGISTiledMapServiceLayer, Point, SpatialReference) {
           map = new Map("map");
 
-          var tiled = new ArcGISTiledMapServiceLayer("http://localhost:9000/rest/services/USA/MapServer?f=json");
+          var tiled = new ArcGISTiledMapServiceLayer("/rest/services/SampleWorldCities10.1/MapServer");
           map.addLayer(tiled);
         }
       );
