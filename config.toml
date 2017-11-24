@@ -1,3 +1,10 @@
-[[service]]
+[server]
+port = 6081
+
+[[services]]
 name = "SampleWorldCities10.1"
 path = "data/arcgiscache/10.1/SampleWorldCities/World Cities Population"
+
+[[services]]
+name = "SampleWorldCities10.3.1"
+path = "data/arcgiscache/10.3.1/SampleWorldCities/World Cities Population"

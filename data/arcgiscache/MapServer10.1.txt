@@ -1,0 +1,114 @@
+{
+ "currentVersion": 10.11,
+ "serviceDescription": "SampleWorldCities 服务用于快速轻松地预览 GIS 服务器的功能。单击缩略图图像可以在 web 应用程序中打开它。此实例服务为可选服务，因此可以删除。",
+ "mapName": "World Cities Population",
+ "description": "",
+ "copyrightText": "",
+ "supportsDynamicLayers": false,
+ "layers": [
+  {
+   "id": 0,
+   "name": "Cities",
+   "parentLayerId": -1,
+   "defaultVisibility": true,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0
+  },
+  {
+   "id": 1,
+   "name": "Continent",
+   "parentLayerId": -1,
+   "defaultVisibility": true,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0
+  },
+  {
+   "id": 2,
+   "name": "World",
+   "parentLayerId": -1,
+   "defaultVisibility": true,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0
+  }
+ ],
+ "tables": [],
+ "spatialReference": {
+  "wkid": 4326,
+  "latestWkid": 4326
+ },
+ "singleFusedMapCache": true,
+ "tileInfo": {
+  "rows": 256,
+  "cols": 256,
+  "dpi": 96,
+  "format": "PNG",
+  "compressionQuality": 0,
+  "origin": {
+   "x": -400,
+   "y": 400
+  },
+  "spatialReference": {
+   "wkid": 4326,
+   "latestWkid": 4326
+  },
+  "lods": [
+   {
+    "level": 0,
+    "resolution": 0.5948652514575701,
+    "scale": 250000000
+   },
+   {
+    "level": 1,
+    "resolution": 0.29743262572878504,
+    "scale": 125000000
+   },
+   {
+    "level": 2,
+    "resolution": 0.15228550437313793,
+    "scale": 64000000
+   }
+  ]
+ },
+ "initialExtent": {
+  "xmin": -104.53020709870626,
+  "ymin": -25.471925275660684,
+  "xmax": 75.35704494206294,
+  "ymax": 51.908146633940035,
+  "spatialReference": {
+   "wkid": 4326,
+   "latestWkid": 4326
+  }
+ },
+ "fullExtent": {
+  "xmin": -180,
+  "ymin": -90,
+  "xmax": 180.0001220703125,
+  "ymax": 90.0001220703125,
+  "spatialReference": {
+   "wkid": 4326,
+   "latestWkid": 4326
+  }
+ },
+ "minScale": 250000000,
+ "maxScale": 64000000,
+ "units": "esriDecimalDegrees",
+ "supportedImageFormatTypes": "PNG32,PNG24,PNG,JPG,DIB,TIFF,EMF,PS,PDF,GIF,SVG,SVGZ,BMP",
+ "documentInfo": {
+  "Title": "World Cities",
+  "Author": "ESRI",
+  "Comments": "The SampleWorldCities map service displays world cities symbolized based on population.",
+  "Subject": "The SampleWorldCities map service displays world cities symbolized based on population.",
+  "Category": "",
+  "AntialiasingMode": "None",
+  "TextAntialiasingMode": "Force",
+  "Keywords": "示例、地图、服务"
+ },
+ "capabilities": "Map,Query,Data",
+ "supportedQueryFormats": "JSON, AMF",
+ "maxRecordCount": 1000,
+ "maxImageHeight": 2048,
+ "maxImageWidth": 2048
+}

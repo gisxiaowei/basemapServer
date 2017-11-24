@@ -5,6 +5,7 @@ package conf
  */
 
 type CacheInfo struct {
+	Typens           string `xml:"typens,attr"`
 	TileCacheInfo    TileCacheInfo
 	TileImageInfo    TileImageInfo
 	CacheStorageInfo CacheStorageInfo

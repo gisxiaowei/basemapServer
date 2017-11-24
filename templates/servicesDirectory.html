@@ -1,0 +1,27 @@
+{{ define "servicesDirectory" }}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>服务目录</title>
+</head>
+
+<body>
+    <div>
+        服务：
+        <ul>
+            {{ range $key, $value :=. }}
+            <li>
+                <a href="/rest/services/{{$key}}/MapServer">{{$key}}</a>
+            </li>
+            {{ end }}
+        </ul>
+    </div>
+</body>
+
+</html>
+
+{{ end }}
