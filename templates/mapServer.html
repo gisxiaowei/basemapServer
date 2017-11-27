@@ -1,0 +1,35 @@
+{{ define "mapServer" }}
+
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{.}}</title>
+    <style type="text/css">
+        a {
+            margin-right: 10px;
+        }
+        .service-info{
+            margin: 10px 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <a href="/rest/services">回到服务目录</a>
+    </div>
+    <div class="service-info">
+        <div>服务：{{.}}(MapServer)</div>
+        <div>
+            <a href="/rest/services/{{.}}/MapServer?f=pjson">PJSON</a>
+            <a href="/rest/services/{{.}}/MapServer?f=json">JSON</a>
+            <a href="/rest/services/{{.}}/MapServer?f=jsapi">ArcGIS JavaScript</a>
+        </div>
+    </div>
+</body>
+
+</html>
+
+{{ end }}

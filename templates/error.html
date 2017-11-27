@@ -1,0 +1,25 @@
+{{ define "error" }}
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{.Message}}</title>
+    <style type="text/css">
+    </style>
+</head>
+
+<body>
+    <div>
+        <div>
+            <b>错误：</b>{{.Message}}</div>
+        <div>
+            <b>代码：</b>{{.Code}} </div>
+    </div>
+</body>
+
+</html>
+
+{{ end }}

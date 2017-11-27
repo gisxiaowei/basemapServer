@@ -13,7 +13,7 @@ import (
 
 var arcgisCaches = make(map[string]arcgisCache.ArcgisCache)
 
-// 请求示例：http://localhost:9000/rest/services/SampleWorldCities10.1/MapServer/tile/0/2/2
+// 请求示例：http://localhost:6081/rest/services/SampleWorldCities10.1/MapServer/tile/0/2/2
 func main() {
 	var config config.Config
 	if _, err := toml.DecodeFile("config.toml", &config); err != nil {
@@ -35,6 +35,7 @@ func main() {
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("public/"))))
 
 	// {_:[/]?}表示/可以重复任意次
+	r.HandleFunc("/", RootHandler)
 	r.HandleFunc("/rest/services{_:[/]?}", ServicesDirectoryHandler)
 	r.HandleFunc("/rest/services/{name}/MapServer{_:[/]?}", ArcgisCacheMapServerHandler)
 	r.HandleFunc("/rest/services/{name}/MapServer/tile/{level:[0-9]+}/{row:[0-9]+}/{col:[0-9]+}", ArcgisCacheTileHandler)

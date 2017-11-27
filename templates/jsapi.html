@@ -1,0 +1,36 @@
+{{ define "jsapi" }}
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.}}</title>
+  <link rel="stylesheet" href="/static/jsapi/esri/css/esri.css">
+  <style>
+    html,
+    body,
+    #map {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+  <script>
+    var url = "/rest/services/{{.}}/MapServer";
+    var dojoConfig = {
+				locale : "zh-cn"
+			};
+  </script>
+  <script src="/static/jsapi/dojo/dojo.js"></script>
+  <script>require(["app/main"]);</script>
+
+</head>
+
+<body>
+  <div id="map"></div>
+</body>
+
+</html>
+{{ end }}

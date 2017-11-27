@@ -1,21 +1,36 @@
 {{ define "servicesDirectory" }}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>服务目录</title>
+    <style type="text/css">
+        a {
+            margin-right: 10px;
+        }
+        .service-list{
+            margin: 20px 0px;
+        }
+    </style>
 </head>
 
 <body>
     <div>
-        服务：
+        <div>服务目录</div>
+        <div>
+            <a href="/rest/services?f=pjson">PJSON</a>
+            <a href="/rest/services?f=json">JSON</a>
+        </div>
+    </div>
+    <div class="service-list">
+        <div>服务列表：</div>
         <ul>
             {{ range $key, $value :=. }}
             <li>
-                <a href="/rest/services/{{$key}}/MapServer">{{$key}}</a>
+                <a href="/rest/services/{{$key}}/MapServer">{{$key}}</a>(MapServer)
             </li>
             {{ end }}
         </ul>
